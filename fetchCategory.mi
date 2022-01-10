@@ -1,0 +1,15 @@
+<%class>
+	has 'category_id' => (required => 1);
+</%class>
+
+<% $categories[0]->{'title'} %>
+
+<%init>
+	my $dbh = Ws21::DBI->dbh();
+	my $sth = $dbh->prepare("SELECT title from wae01_category WHERE category_id=?");
+	$sth->execute($.category_id);
+  my @categories;
+  while (my $hr = $sth->fetchrow_hashref) {
+    push(@categories, $hr);
+  }
+</%init>

@@ -1,0 +1,17 @@
+<%class>
+	has 'user_id' => (required => 1);
+</%class>
+
+<% $author->{'name'} %>
+
+<%init>
+
+	my $dbh = Ws21::DBI->dbh();
+	my $sth = $dbh->prepare("SELECT name from wae01_user where user_id = ?");
+	$sth->execute($.user_id);
+    my @authors;
+	while (my $hr = $sth->fetchrow_hashref) {
+		push(@authors, $hr);
+	}
+	my $author = $authors[0];
+</%init>

@@ -1,0 +1,21 @@
+<%class>
+  has 'username';
+  has 'password';
+</%class>
+
+<div id="bodywrap">
+	<& menu.mi, username => $.username, password => $.password &>
+
+	<section id="pagetop">
+		<nav id="sitenav">
+		</nav>
+	</section>
+
+	<header id="pageheader">
+		<h1>
+		Our cutest Puppy Blog
+		</h1>
+		<h2>
+		Welcome <& fetchAuthor.mi, user_id => $m->session->{user_id} &>
+		</h2>
+	</header>

@@ -1,0 +1,6 @@
+<%class>
+    method multiply ($a, $b) {
+        return $a * $b;
+    }
+</%class>
+Hello me is a component

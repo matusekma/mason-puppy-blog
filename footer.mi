@@ -1,0 +1,9 @@
+<%class>
+has 'grp';
+</%class>
+<footer class="footer">
+    <hr>
+    <div class="container">
+        <span class="text-muted">This is the footer of: WAE group <% $.grp %></span>
+    </div>
+</footer>

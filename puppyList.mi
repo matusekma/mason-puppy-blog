@@ -1,0 +1,56 @@
+<%class>
+  has 'category_id';
+  has 'all_unpublished';
+</%class>
+
+<div class="container-fluid puppyList">
+<div class="row justify-content-center justify-content-md-start">
+% foreach my $article (@articles) {
+<article class="post col-12 col-sm-12 col-md-12 col-lg-6 col-xl-4 mb-2">
+    <div class="card">
+        <img class="card-img-top" src="<% $article->{'image_url'} %>" alt="Puppy image">
+        <div class="card-body">
+            <h5 class="card-title"><% $article->{name} %></h5>
+            <p class="card-text"><% $article->{excerpt} %></p>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <p class="post_info"> Published in <b><& fetchCategory.mi, category_id => $article->{category_id} &></b> on <% $article->{timestamp} %> </p>
+            </li>
+            <li class="list-group-item">
+                <span class="post_author">Written by <& fetchAuthor.mi, user_id => $article->{user_id} &></span>
+            </li>
+            <li class="list-group-item button-container">
+                <div class="post_link"><a class="ed btn btn-primary" href="/wae01/detailView?articleId=<% $article->{article_id} %>"><b>Read Full</b></a></div>
+% if (defined $m->session->{user_id} && $m->session->{user_id} > 0) {
+		<div class="post_link"><a href="/wae01/editor?article_id=<% $article->{'article_id'} %>" class="ed btn btn-outline-primary">Edit</a></div>
+		<div class="post_link"><a href="/wae01/article/delete?article_id=<% $article->{'article_id'} %>" class="ed btn btn-outline-primary">Delete</a></div>
+% }                
+            </li>
+        </ul>
+        
+  </div>
+</article>
+% }
+</div>
+</div>
+
+<%init>
+  my $dbh = Ws21::DBI->dbh();
+  my $sth;
+  my @articles;
+  if ($.all_unpublished == 1) {
+		$sth = $dbh->prepare("SELECT article_id, name, image_url, excerpt, description, timestamp, user_id, category_id FROM wae01_article where status='0' order by timestamp desc");
+		$sth->execute();
+  }
+  elsif (!defined $.category_id) {
+		$sth = $dbh->prepare("SELECT article_id, name, image_url, excerpt, description, timestamp, user_id, category_id FROM wae01_article where status='1' order by timestamp desc");
+		$sth->execute();
+  } else{
+    	$sth = $dbh->prepare("SELECT article_id, name, image_url, excerpt, description, timestamp, user_id, a.category_id FROM wae01_article a INNER JOIN wae01_category c on a.category_id=c.category_id where status='1' and (a.category_id=? OR c.parent_category_id=?) order by timestamp desc");
+    	$sth->execute($.category_id, $.category_id);
+  }
+
+  while (my $hr = $sth->fetchrow_hashref) {
+    push(@articles, $hr);
+  }
+</%init>
